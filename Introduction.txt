@@ -1,0 +1,116 @@
+﻿Scriptable User Introduction _ En
+*** This Project is in remake! The command may changes anytime. ***
+	You can found that the namespace is greatly changed to be more readable, much longer though.
+	I strongly suggest you use the longer version, because it is much more readable.
+
+A multifunction Scriptable Tool to allow users to script what their computers can automaticly do.
+
+script extensions: *.sru, *.srux, *.srup;
+ - (Scriptable User Script, Scriptable User Executable, Scriptable User Package)
+
+Allows you to do multiple things:
+· Run script(s) or program(s) automaticly at set time.
+· Send virtural mouse &/ keyboard message, to the display, the whole screen or the single window.
+        Send message to a single window allows it to be sent when the window is not on the top.
+        Really useful when you are doing something repeatedly.
+· Start a program or kill it.
+· Shutdown, Sleep or lock your pc.
+· Much more for you to explore!
+
+Note: The script host will exit if it cannot understand a line. To let it continues if it's not important, use "environment StopOnError false".
+  Now the commands are case-sensitive. However, the "shell:Run" command uses the windows shell, which is case-insensitive.
+
+Command List:
+0x0   // ;			Comments, which will be ignored. The mark(s) must be at the beginning of a line.
+						Sadly that we do not support in-line comments currently, Since that need to re-built the parsing system.
+
+#These are global commands.
+0x1   environment		Set execution environment.
+	  =env
+0x4   include <...>		include a header file. A header file can Pre-Init some funcions, timer, variable, etc.
+
+#Using variable in other places is like ${VarName} or ${Class:VarName}.
+#If you are using some pre-defined values, use like ${Global:VarName}.
+# Different from the lua or python, in this system user must define the variable before using it.
+0x101   var:Create				Create a variable.
+0x102   var:Recycle				Recycle(delete) a variable.
+0x103   var:Calculate				Caculate expressions. In the expression, you don't need to load it by "${}".
+0x104   var:Swap				Swap the two variables. The two variables must be at the same type.
+0x105   var:Trunk				[Only available to Numbers] Truncate it to an integer.
+0x106   var:Round				[Only available to Numbers] Half adjust it to an integer.
+
+#These are the pre-defined commands.
+0x201   window:Select						Let user choose window instantly.
+	     =window:Sel
+0x202   window:getFrontWindow				Select the top, desktop or focus window.
+0x203   window:SearchByExecutableName	Search window by executable file name.
+0x204   window:SearchByWindowName		Search window(s) by its name.
+0x205   window:SearchByWndClassName		Search window(s) by its class's name.
+0x208   window:PostMessage				Send close message to a window.
+0x209   window:CallMinimize					Send minimize message to the a window.
+	     =window:CMin
+0x210   window:CallMaximize				Send maximize message to a window.
+	     =window:CMax
+0x211   window:ForceMinimize				Force a window to be minimized.
+	     =window:FMin
+0x212   window:ForceMaximize				Force a window to be maximized.
+	     =window:FMax
+0x213   window:CloseWindow				Send closing message to a window.
+
+0x301   displays:ScanActiveDisplay		Scan activate display. (I don't know if this can work when display is off.)
+
+0x301   shell:Run			Run an NT Shell Command.
+0x302   shell:Exec		Run an executable. [Advanced: This is acturally using WinAPI:CreateProcess]
+0x303   shell:cmd			Start %COMSPEC% (cmd.exe by default).
+	     =shell:comspec
+
+0x401   pcid:shutdown		Shutdown your PC.
+0x402   pcid:sleep			Make your PC sleep.
+0x403   pcid:lock			Lock your PC.
+0x404   pcid:logout			Logout your windows account. (May not work?).
+
+0x501   mouseutils:ClickDisplay		Click on the whole display.
+0x502   mouseutils:ClickWindow		Click on a single window.
+0x541   mouseutils:MoveTo			Move the mouse to the specific position. (Can be annoying).
+
+0x601   keybrdutils:Press				Send a virtual key pressing message globally.
+0x602   keybrdutils:PressWindow		Send key message to window.
+0x603   keybrdutils:Hook				Hook a specific key.
+0x604   keybrdutils:Block				Block a specific key. (Dangerous).
+
+0x901   time:LocalTime				Get local time. (yyyy-mm-dd).
+0x902   time:GlobalTime				Get UTC(+0) time. (yyyy-mm-dd).
+0x903   time:LocalTimeFormat		Get local time, and you can specify the format.
+0x904   time:GlobalTimeFormat		Get UTC(+0) time, and you can specify the format.
+
+#This "TIMER" is to execute something at set time.
+0xA01   timer:Initialize		Initialize a timer. (That is, to reset it.)
+	     =timer:Init
+0xA02   timer:Create			Create a timer.
+0xA03   timer:Reset			This command just reset the timer's statistical information, do not change its settings.
+0xA04   timer:Join			<Invalid>
+0xA05   timer:Yield			<Invalid>
+
+# These are and will be unavailable for a long period of time.
+0x1601   msa:Login				Login your Microsoft account.
+0x1602   msa:Logout				Logout your Microsoft account.
+0x1603   msa:LoadToken			Load a token from a file.
+0x1631   msa:GetToken			Request a token from the server.
+0x1632   msa:CheckToken		Check if the token is available.
+0x1634   msa:SaveToken			Save a token to a file.
+0x1635   msa:RefreshToken		Refresh the token.
+
+0x1801   netutils:Initialize			Initialize the library. This must be called before using most of this class's command.
+	     =netutils:Init
+0x1802   netutils:Lookup				Look up for the ip of an url.
+
+27  cdll:Init		Initialize a c dll.
+28  cdll:Uninit		Uninitialize a c dll.
+29  cdll:Call			Call a C dll function. It should be initialized through "initdllc" command first.
+
+35  messagebox		Open a message box.
+36  exit				Exit the script with a code.
+
+37  delay			Wait a moment. (Milliseconds)
+38  waituntil		Wait until the following command is ended. You can set a max live time.
+	

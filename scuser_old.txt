@@ -1,0 +1,81 @@
+# ; // Comments
+
+confirm
+
+ask
+     [STD:VARIABLE]
+
+env
+    using 
+    set
+        exitonerror [T/F{Default:F}]
+
+cmd
+    [String:CmdCommand\UntilLineEnd]
+
+system
+       [String:SystemShellCommand\UntilLineEnd]
+
+run
+    executable [String:ExeFilename]
+    webpage [String:URL]
+
+pc
+   shutdown
+   restart
+   sleep
+   hibernate
+   closescreen
+   litscreen
+
+reg [Not finished]
+    openkey
+    close
+    writekey
+
+var
+    create [Type] [Varname]
+    modefy [Varname]
+    remove [Varname]
+    reset [Varname] <VarModule>
+    copy [Varname:Source] [Varname:Dest]
+    move [Varname:Source] [Varname:Dest]
+
+findwindow
+          :type [HWND] [WindowType]
+          :name [HWND] [String:Name]
+          :process [HWND] [/n String:Processname | /p uint:ProcessPID]
+          :title [HWND]
+          :hwnd [WndID {Hex:0x00000}]
+
+file
+     open [HFILE] [String:Filename]
+     close [HFILE]
+     delete [HFILE]
+     seek [filePosition]
+     seek_r [BEGIN|END]
+     write [HFILE] [STD:VARIABLE]
+     write_p [memPosition] [uint:Size]
+     read [HFILE] [STD:VARIABLE]
+     read_p [memPosition] [uint:Size]
+
+user
+     getname [String]
+     getmousepos [SCPOS:ScreenPosition]
+     setmousepos [SCPOS:ScreenPosition]
+
+
+
+[STD:VARIABLE]
+short ushort byte ubyte int uint long ulong {STD:Convertable}
+hpnum {Not Finished}
+ByteArray
+String BasicString
+HFILE HPROCESS HMODULE
+HWND HDISPLAY
+HREG HREGKEY
+HKEYBOARD HKEY
+POS SCPOS WNDPOS {STD:Convertable}
+
+[BOOL] {CaseInsensitive}
+TRUE FALSE ERROR
