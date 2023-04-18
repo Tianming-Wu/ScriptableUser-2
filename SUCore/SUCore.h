@@ -24,7 +24,6 @@ enum CommandIndex {
 	CI_Confirm, CI_Ask, CI_Env, CI_Cmd, CI_System,
 	CI_Run, CI_Pc, CI_Reg, CI_Var, CI_Findwindow,
 	CI_File, CI_User
-
 };
 
 enum VariableType {
