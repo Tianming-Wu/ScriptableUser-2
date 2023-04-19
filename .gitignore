@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 #VSCode Generated Configuration Files
 .vscode
+
+#Github Workflows
+.github
