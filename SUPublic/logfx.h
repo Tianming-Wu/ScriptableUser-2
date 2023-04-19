@@ -8,6 +8,9 @@
 
 #include "publicdef.h"
 
+#undef size_t;
+typedef __int64 size_t;
+
 namespace myMemCtrl {
 	pbyte realloc(pbyte _orig, size_t _nsize, bool _SrcCopy = true) noexcept {
 		pbyte  _nric = new byte[_nsize];
@@ -19,22 +22,39 @@ namespace myMemCtrl {
 	}
 }
 
-class LogFx {
-	std::ofstream ofs;
-	std::string ProcessName; int pid;
+template <typename _T>
+class basic_LogFx
+{
+	using fxofstream = std::basic_ofstream<_T, std::char_traits<_T>>;
+	using fxstring = std::basic_string<_T, std::char_traits<_T>, std::allocator<_T>>;
+	using cw = sizeof(_T);
+
+#if _T == char
+	using fxGetModuleFileName = GetModuleFileNameA;
+	using fxprintf = printf;
+	using fxsprintf_s = sprintf_s;
+	#define fxText(quote) quote
+#else
+	using fxGetModuleFileName = GetModuleFileNameW;
+	using fxprintf = wprintf;
+	using fxsprintf_s = swprintf_s;
+	#define fxText(quote) L##quote
+#endif
+
+	fxstring ProcessName; int pid;
 	size_t _BufSize;
-	char* _CplBuffer1, * _CplBuffer2;
+	_T* _CplBuffer1, * _CplBuffer2;
 public:
 
-	LogFx(const char* _FileName, const char* _ProcessName = nullptr, size_t BufSize = 256)
+	basic_LogFx(const _T* _FileName, const _T* _ProcessName = nullptr, size_t BufSize = 256)
 		: _BufSize(BufSize)
 	{
 		if (_ProcessName == nullptr) {
-			char* Mname = new char[32767];
-			GetModuleFileNameA(NULL, Mname, sizeof(char[32767]));
-			std::string MnStr(Mname); size_t lpos; delete []Mname;
+			_T* Mname = new _T[32767];
+			GetModuleFileName(NULL, Mname, sizeof(_T[32767]));
+			fxstring MnStr(Mname); size_t lpos; delete []Mname;
 
-			if ((lpos = MnStr.find_last_of('\\')) != std::string::npos) {
+			if ((lpos = MnStr.find_last_of('\\')) != fxstring::npos) {
 				ProcessName = MnStr.substr(lpos + 1);
 			}
 			else ProcessName = MnStr;
@@ -45,32 +65,31 @@ public:
 
 		_CplBuffer1 = new char[_BufSize], _CplBuffer2 = new char[_BufSize];
 		pid = _getpid();
-		ofs = std::ofstream(_FileName, std::ios::app);
+		ofs = fxofstream(_FileName, std::ios::app);
 	}
 
-	~LogFx() {
-		ofs.write("\n", strlen("\n"));
+	~basic_LogFx() {
+		ofs.write(fxText("\n"), strlen(fxText("\n")));
 		ofs.close();
 	}
 
-	std::string timestamp() {
+	fxstring timestamp() {
 		time_t tm0 = time(0);
 		tm _tm;
 		localtime_s(&_tm, &tm0);
 		
-		static char _TimeBuffer[32];
-		sprintf_s(_TimeBuffer, 32, "%02d/%02d/%02d %02d:%02d:%02d",
+		static _T _TimeBuffer[32];
+		fxsprintf_s(_TimeBuffer, 32, fxText("%02d/%02d/%02d %02d:%02d:%02d"),
 			_tm.tm_year + 1900, _tm.tm_mon+1, _tm.tm_mday,
 			_tm.tm_hour, _tm.tm_min, _tm.tm_sec
 		);
-		return std::string(_TimeBuffer);
+		return fxstring(_TimeBuffer);
 	}
 
 template<class... Dte>
-	int write(const char* _ModuleName, const char* _Format, Dte... _Data) {
-		//if (pf == NULL) return -1;
+	int write(const _T* _ModuleName, const _T* _Format, Dte... _Data) {
 		int ret = sprintf_s(_CplBuffer1, _BufSize, _Format, _Data...);
-		sprintf_s(_CplBuffer2, _BufSize, "[%s|%d] [%s/%s]: %s", timestamp().c_str(), pid, ProcessName.c_str(), _ModuleName, _CplBuffer1);
+		fxsprintf_s(_CplBuffer2, _BufSize, fxText("[%s|%d] [%s/%s]: %s"), timestamp().c_str(), pid, ProcessName.c_str(), _ModuleName, _CplBuffer1);
 		ofs.write(_CplBuffer2, strlen(_CplBuffer2));
 		return ret;
 	}
@@ -83,3 +102,6 @@ template<class... Dte>
 	}
 
 };
+
+using LogFx = basic_LogFx<char>;
+using wLogFx = basic_LogFx<wchar_t>;

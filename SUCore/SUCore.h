@@ -11,6 +11,7 @@
 
 #include "..\SUPublic\stringlist.h"
 #include "..\SUPublic\logfx.h"
+#include "..\SUPublic\basic.h"
 
 using fsit = std::filesystem::directory_iterator;
 using std::string;
@@ -26,5 +27,7 @@ using std::string;
 
 class SUCore {
 public:
-	int _sucall init();
+	SUCore();
+	~SUCore();
+	int _sucall ExecuteFromFile(const std::wstring FileName);
 };
