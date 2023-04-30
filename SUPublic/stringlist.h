@@ -13,6 +13,13 @@ namespace std {
     private:
 
     public:
+        static const size_t npos = -1;
+        struct size_t_d{
+            size_t a, b;
+            size_t_d(){};
+            size_t_d(size_t _a,size_t _b):a(_a),b(_b){}
+        };
+
         std::vector<_tagString> strListv;
 
         enum SplitMethod {
@@ -28,6 +35,26 @@ namespace std {
                 }
             }
         }
+
+        size_t findItem(string _item, size_t beginItem = 0) {
+            for(size_t i = 0; i < strListv.size(); i++) {
+                if(strListv[i]==_item) return i;
+            }
+            return npos;
+        }
+
+        size_t_d findItemContent(string _itemc, size_t beginItem = 0, size_t beginContent = 0) {
+            size_t lsp;
+            for(size_t i = 0; i < strListv.size(); i++) {
+                if((lsp = strListv[i].find(_itemc, beginContent)) != _tagString::npos) return size_t_d(i, lsp);
+            }
+            return size_t_d(npos, npos);
+        }
+
+        inline size_t size() { return strListv.size(); }
+
+        inline _tagString operator [] (size_t pos) { return strListv[pos]; }
+        inline _tagString at(size_t pos) { return strListv.at(pos); }
 
         using iterator = typename::std::vector<_tagString>::iterator;
 
